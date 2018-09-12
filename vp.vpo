@@ -48,12 +48,12 @@ LinkerName=LINK386.EXE
 
 [Directories]
 Conditionals=
-OutputDir=\VP\out.%p\units
-ExeOutDir=\vp\out.%p
-IncludePath=\VP\source\rtl;\VP\source\tv
-UnitPath=\VP\units.%p;\VP\source\rtl;C:\VP\source\%p;\VP\source\tv
-LibPath=\VP\lib.%p;\VP\units.%p
-ResPath=\VP\res.%p
+OutputDir=out.%p
+ExeOutDir=bin.%p
+IncludePath=d:\prog\pascal\vp\source\rtl;d:\prog\pascal\vp\source\tv;d:\prog\pascal\vp\source\opro
+UnitPath=d:\prog\pascal\vp\units.%p;d:\prog\pascal\vp\source\rtl;d:\prog\pascal\vp\source\%p;d:\prog\pascal\vp\source\opro;d:\prog\pascal\vp\source\tv
+LibPath=d:\prog\pascal\vp\lib.%p;d:\prog\pascal\vp\units.%p
+ResPath=d:\prog\pascal\vp\res.%p
 
 [Resource Compiler]
 CmdLine=
@@ -82,8 +82,8 @@ Options=56
 Display=0
 
 [Parameters]
-RunParams=7 c:\fido\hi-files\traffic.bin c:\report.log
-PrimaryFile=C:\Projects\Hi-Files\HiFiles.pas
+RunParams=7 d:\temp\traffic.bin d:\temp\report.log
+PrimaryFile=HiFiles.pas
 TargetPlatform=1
 
 [Mouse]
