@@ -489,14 +489,21 @@ var
   ErrCode: Integer;
 begin
   if not CFG^.Archivers^.GetCall( FD^.FileName^, Diz ) then Exit;
+  if CFG^.DizFiles^.Count < 1 then Exit;
   Log^.Write( ll_Protocol, Format(LoadString(_SRunExternal), [Diz] ));
   SplitPair( Diz, Exe, Par );
+  // FIXME: Этот код может в любой момент устареть, и мы не будем видеть описатели в архивах даже если они там есть.
+  // FIXME: Поэтому лучше мы будем просто пытаться извлккать описатели вслепую.
+  {
   Diz := SearchDiz( AtPath(FD^.FileName^, Path) );
   if Diz = '' then
   begin
     Log^.Write( ll_Protocol, LoadString(_SLogNoDizInArc) );
     Exit;
   end;
+  }
+  // FIXME: Пока что пытаемся извлечь только первый описатель из списка. Не хочу делать цикл.
+  Diz := PString(CFG^.DizFiles^.At(0))^;
   Cur := GetCurrentDir;
   try
     if not SetCurrentDir( CFG^.TempDir ) then
@@ -511,8 +518,12 @@ begin
       raise Exception.Create( Format(LoadString(_SExtRunError), [-ErrCode] ));
     if ErrCode > 0 then
       raise Exception.Create( Format(LoadString(_SExtRunErrLevel), [ErrCode] ));
-    Log^.Write( ll_Protocol, Format(LoadString(_SDizExtracted), [Diz] ));
-    FD^.LoadFromFile( Diz );
+    if FileExists( Diz ) then
+    begin
+      Log^.Write( ll_Protocol, Format(LoadString(_SDizExtracted), [Diz] ));
+      FD^.LoadFromFile( Diz );
+    end else
+      Log^.Write( ll_Protocol, LoadString(_SLogNoDizInArc) );
   except
     on E: Exception do
       Log^.Write( ll_Warning, E.Message );
