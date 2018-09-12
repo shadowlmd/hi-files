@@ -1338,14 +1338,10 @@ begin
 end;
 
 procedure ReadArchive(const inName : String);
-//var
-//  SaveAttr: Word;
 begin
   Assign(f, inName);
-  //SaveAttr := FileGetAttr(inName);
-  //FileSetAttr(inName, $20);
 
-  FileMode := $40; // open_access_ReadOnly or open_share_DenyNone;
+  FileMode := $40; // open_access_ReadOnly or open_share_DenyNone
   reset(f, 1);
   if IOResult <> 0 then Exit;
 
@@ -1363,11 +1359,6 @@ begin
     8 : ViewLIM;
     9 : ViewHA;
    10 : if NewRAR then ViewNRAR else ViewRAR;
-  // Это больше не нужно.
-  {
-  else
-    AddFileCallBack('FILE_ID.DIZ', 1, 1, 1); // let's try to extract file_id.diz from unknown archives
-  }
   end;
   close(f);
 end;

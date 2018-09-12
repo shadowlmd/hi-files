@@ -482,28 +482,18 @@ end; { TryDll }
 
 procedure TryArchive;
 var
+  Arc: String;
   Exe: String;
   Par: String;
   Diz: String;
   Cur: String;
   ErrCode: Integer;
 begin
-  if not CFG^.Archivers^.GetCall( FD^.FileName^, Diz ) then Exit;
   if CFG^.DizFiles^.Count < 1 then Exit;
-  Log^.Write( ll_Protocol, Format(LoadString(_SRunExternal), [Diz] ));
-  SplitPair( Diz, Exe, Par );
-  // FIXME: Этот код может в любой момент устареть, и мы не будем видеть описатели в архивах даже если они там есть.
-  // FIXME: Поэтому лучше мы будем просто пытаться извлккать описатели вслепую.
-  {
+  if not CFG^.Archivers^.GetCall( FD^.FileName^, Arc ) then Exit;
   Diz := SearchDiz( AtPath(FD^.FileName^, Path) );
-  if Diz = '' then
-  begin
-    Log^.Write( ll_Protocol, LoadString(_SLogNoDizInArc) );
-    Exit;
-  end;
-  }
-  // FIXME: Пока что пытаемся извлечь только первый описатель из списка. Не хочу делать цикл.
-  Diz := PString(CFG^.DizFiles^.At(0))^;
+  // Если магия ничего не нашла, попробуем извлечь первый описатель из списка.
+  if Diz = '' then Diz := PString(CFG^.DizFiles^.At(0))^;
   Cur := GetCurrentDir;
   try
     if not SetCurrentDir( CFG^.TempDir ) then
@@ -511,8 +501,10 @@ begin
     if FileExists( Diz ) then
     begin
       if not VFS_EraseFile( Diz ) then
-        raise Exception.Create( Format(LoadString(_SCantDelTmpFile), [AtPath(Diz, CFG^.TempDir)] ));
+        raise Exception.Create( Format(LoadString(_SCantDelTmpFile), [AtPath(Diz, CFG^.TempDir)]) );
     end;
+    Log^.Write( ll_Protocol, Format(LoadString(_SRunExternal), [Arc] ));
+    SplitPair( Arc, Exe, Par );
     ErrCode := Execute( Exe, Par + ' ' + AtPath(FD^.FileName^, Path) + ' ' + Diz, True );
     if ErrCode < 0 then
       raise Exception.Create( Format(LoadString(_SExtRunError), [-ErrCode] ));
