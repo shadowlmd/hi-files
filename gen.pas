@@ -510,18 +510,17 @@ begin
       raise Exception.Create( Format(LoadString(_SExtRunError), [-ErrCode] ));
     if ErrCode > 0 then
       raise Exception.Create( Format(LoadString(_SExtRunErrLevel), [ErrCode] ));
-    if FileExists( Diz ) then
-    begin
-      Log^.Write( ll_Protocol, Format(LoadString(_SDizExtracted), [Diz] ));
-      FD^.LoadFromFile( Diz );
-    end else
-      Log^.Write( ll_Protocol, LoadString(_SLogNoDizInArc) );
   except
     on E: Exception do
       Log^.Write( ll_Warning, E.Message );
   end;
   if FileExists( Diz ) then
+  begin
+    Log^.Write( ll_Protocol, Format(LoadString(_SDizExtracted), [Diz] ));
+    FD^.LoadFromFile( Diz );
     VFS_EraseFile( Diz );
+  end else
+    Log^.Write( ll_Protocol, LoadString(_SLogNoDizInArc) );
   SetCurrentDir( Cur );
 end; { TryArchive }
 
